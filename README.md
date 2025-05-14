@@ -47,7 +47,6 @@ Untuk menampilkan data nilai tukar real-time, Anda bisa menggunakan API key prib
 
 ## 🗂 Struktur Proyek
 ```bash
-.
 ├── public/
 ├── src/
 │   ├── data/
