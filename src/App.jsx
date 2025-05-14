@@ -1,10 +1,13 @@
-import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { React, useEffect, useState } from 'react';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
+import { fetchCurrencies } from './api/currencyAPI'
+import CurrencySelector from './components/currencySelector'
 
 const navigation = [
-  { name: 'Convert', href: '#', current: true },
-  { name: 'Exchange Rates', href: '#', current: false },
-  { name: 'About', href: '#', current: false },
+  { name: 'Converter', href: '#' },
+  { name: 'Exchange Rates', href: '#' },
+  { name: 'About', href: '#' },
 ]
 
 function classNames(...classes) {
@@ -12,133 +15,136 @@ function classNames(...classes) {
 }
 
 export default function App() {
-  return (
-    <>
-      <div className="min-h-full">
-        <Disclosure as="nav" className="bg-base-200">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="flex h-16 items-center justify-center">
-              <div className="flex items-center">
-                <div className="shrink-0">
-                  <img
-                    alt="Your Company"
-                    src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
-                    className="size-8"
-                  />
-                </div>
-                <div className="hidden md:block">
-                  <div className="ml-10 flex items-baseline space-x-4">
-                    {navigation.map((item) => (
-                      <a
-                        key={item.name}
-                        href={item.href}
-                        aria-current={item.current ? 'page' : undefined}
-                        className={classNames(
-                          item.current ? 'bg-primary text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-gray-300',
-                          'rounded-md px-3 py-2 text-sm font-medium',
-                        )}
-                      >
-                        {item.name}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-                  
-              <div className="-mr-2 flex md:hidden">
-                {/* Mobile menu button */}
-                <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md bg-gray-800 p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800 focus:outline-hidden">
-                  <span className="absolute -inset-0.5" />
-                  <span className="sr-only">Open main menu</span>
-                  <Bars3Icon aria-hidden="true" className="block size-6 group-data-open:hidden" />
-                  <XMarkIcon aria-hidden="true" className="hidden size-6 group-data-open:block" />
-                </DisclosureButton>
-              </div>
-            </div>
-          </div>
-                  
-          <DisclosurePanel className="md:hidden">
-            <div className="space-y-1 px-2 pt-2 pb-3 sm:px-3">
-              {navigation.map((item) => (
-                <DisclosureButton
-                  key={item.name}
-                  as="a"
-                  href={item.href}
-                  aria-current={item.current ? 'page' : undefined}
-                  className={classNames(
-                    item.current ? 'bg-primary text-white' : 'text-gray-300 hover:bg-yellow-700 hover:text-gray-300',
-                    'block rounded-md px-3 py-2 text-base font-medium',
-                  )}
-                >
-                  {item.name}
-                </DisclosureButton>
-              ))}
-            </div>
-          </DisclosurePanel>
-        </Disclosure>
+  const [currencies, setCurrencies] = useState([]);
+  const [currencyFrom, setCurrencyFrom] = useState('');
+  const [currencyTo, setCurrencyTo] = useState('');
+  const [loading, setLoading] = useState(true);
 
-        <header>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold tracking-tight text-white">Convert</h1>
-          </div>
-        </header>
-        <main>
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            <div className="card card-xl bg-base-100  shadow-sm">
-              <div className="card-body">
-                <h2 className="card-title">Currency Converter</h2>
-                <p>Convert your money from one currency to another</p>
-                <form className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <select className="select select-bordered w-full" id="currency_from">
-                      <option value="USD" selected>USD</option>
-                      <option value="IDR">IDR</option>
-                      <option value="EUR">EUR</option>
-                      <option value="JPY">JPY</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                    <button
-                      type="button"
-                      className="btn btn-ghost btn-circle"
-                      onClick={() => {
-                        const from = document.getElementById('currency_from').value
-                        const to = document.getElementById('currency_to').value
-                        document.getElementById('currency_from').value = to
-                        document.getElementById('currency_to').value = from
-                      }}
+  useEffect(() => {
+    async function loadCurrencies() {
+      const result = await fetchCurrencies();
+      setCurrencies(result);
+      setCurrencyFrom(result[0]);
+      setCurrencyTo(result[1]);
+      setLoading(false);
+    }
+    loadCurrencies();
+  }, []);
+  
+  if (loading) {
+    return <div className="text-center mt-10 text-white">Loading currencies...</div>;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-r from-[#3f2a02] to-[#7e3606] text-white">
+      {/* Navbar */}
+      <Disclosure as="nav" className="bg-transparent">
+        {({ open }) => (
+          <>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+              <div className="flex h-16 justify-center items-center">
+                <div className="hidden md:flex space-x-4">
+                  {navigation.map((item) => (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      className={classNames(
+                        item.current ? 'text-white font-semibold' : 'text-gray-300 hover:text-white',
+                        'px-3 py-2 rounded-md text-sm'
+                      )}
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 17" aria-hidden="true" class="h-4 w-4 rotate-90 text-greyblue-400 md:rotate-0"><path fill="currentColor" fill-rule="evenodd" d="M11.726 1.273l2.387 2.394H.667V5h13.446l-2.386 2.393.94.94 4-4-4-4-.94.94zM.666 12.333l4 4 .94-.94L3.22 13h13.447v-1.333H3.22l2.386-2.394-.94-.94-4 4z" clip-rule="evenodd"></path></svg>
-                    </button>
-                    <select className="select select-bordered w-full" id="currency_to">
-                      <option value="USD">USD</option>
-                      <option value="IDR" selected>IDR</option>
-                      <option value="EUR">EUR</option>
-                      <option value="JPY">JPY</option>
-                      <option value="GBP">GBP</option>
-                    </select>
-                  </div>
-                  <label class="input w-full">
-                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <g
-                        stroke-linejoin="round"
-                        stroke-linecap="round"
-                        stroke-width="2.5"
-                        fill="none"
-                        stroke="currentColor"
-                      >
-                        <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path>
-                        <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
-                      </g>
-                    </svg>
-                    <input type="text" class="grow" placeholder="amount" />
-                  </label>
-                  <button className="btn btn-primary w-full" type="submit">Submit</button>
-                </form>
+                      {item.name}
+                    </a>
+                  ))}
+                </div>
+                <div className="md:hidden">
+                  <DisclosureButton className="text-gray-400 hover:text-white">
+                    {open ? (
+                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    ) : (
+                      <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+                    )}
+                  </DisclosureButton>
+                </div>
               </div>
             </div>
-          </div>
-        </main>
+
+            <DisclosurePanel className="md:hidden">
+              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                {navigation.map((item) => (
+                  <DisclosureButton
+                    key={item.name}
+                    as="a"
+                    href={item.href}
+                    className="block text-white px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    {item.name}
+                  </DisclosureButton>
+                ))}
+              </div>
+            </DisclosurePanel>
+          </>
+        )}
+      </Disclosure>
+
+      {/* Title */}
+      <div className="text-center mt-10">
+        <h1 className="text-4xl font-bold">Currency Converter</h1>
+        <p className="mt-2 text-lg text-gray-200">Instantly convert one currency to another with the latest exchange rates.</p>
       </div>
-    </>
+
+      {/* Card */}
+      <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-lg p-6" data-theme="cupcake">
+        <div className="flex flex-col space-y-4">
+          {/* Amount */}
+          <div className="flex items-center">
+            <label htmlFor="amount" className="sr-only">Amount</label>
+            <input
+              type="text"
+              id="amount"
+              defaultValue={1}
+              className="w-full input input-bordered input-lg text-xl font-medium bg-grey"
+            />
+          </div>
+
+          {/* Currency Selector */}
+          <div className="flex items-center space-x-2">
+            <CurrencySelector
+              currencies={currencies}
+              selected={currencyFrom}
+              onChange={setCurrencyFrom}
+              id="currency_from"
+            />
+            <button
+              type="button"
+              className="btn  btn-circle"
+              onClick={() => {
+                const from = document.getElementById('currency_from').value;
+                const to = document.getElementById('currency_to').value;
+                document.getElementById('currency_from').value = to;
+                document.getElementById('currency_to').value = from;
+              }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 17" className="w-5 h-5">
+                <path fill="currentColor" d="M11.726 1.273l2.387 2.394H.667V5h13.446l-2.386 2.393.94.94 4-4-4-4-.94.94zM.666 12.333l4 4 .94-.94L3.22 13h13.447v-1.333H3.22l2.386-2.394-.94-.94-4 4z"/>
+              </svg>
+            </button>
+            <CurrencySelector
+              currencies={currencies}
+              selected={currencyTo}
+              onChange={setCurrencyTo}
+              id="currency_to"
+            />
+          </div>
+
+          {/* Result */}
+          <div className="pt-4">
+            <p className="text-gray-500 text-sm">1.00 Cardano =</p>
+            <h2 className="text-3xl font-bold text-[#1d3557]">0.74816706 Euros</h2>
+            <p className="text-gray-500 text-sm mt-1">1 EUR = 1.33660 ADA</p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
