@@ -31,5 +31,10 @@ export async function convertCurrency(from, to, amount) {
   const res = await fetch(`${BASE_URL}/${API_KEY}/latest/${from}`);
   const data = await res.json();
   const rate = data.conversion_rates[to];
-  return amount * rate;
+  const converted = amount * rate;
+
+  return {
+    converted, // total hasil konversi
+    rate       // kurs per 1 unit
+  };
 }

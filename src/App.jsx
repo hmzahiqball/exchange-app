@@ -17,6 +17,7 @@ function classNames(...classes) {
 export default function App() {
   const [amount, setAmount] = useState(1);
   const [convertedAmount, setConvertedAmount] = useState(null);
+  const [conversionRate, setConversionRate] = useState(null); // << tambahan
   const [currencies, setCurrencies] = useState([]);
   const [currencyFrom, setCurrencyFrom] = useState('USD');
   const [currencyTo, setCurrencyTo] = useState('IDR');
@@ -35,9 +36,10 @@ export default function App() {
   // Convert only when input value/state changes, after currency list is loaded
   useEffect(() => {
     if (currencyFrom && currencyTo && amount && currencies.length > 0) {
-      convertCurrency(currencyFrom, currencyTo, amount).then(result => {
-        console.log("Converted Result:", result);
-        setConvertedAmount(result);
+    convertCurrency(currencyFrom, currencyTo, amount).then(({ converted, rate }) => {
+      console.log(converted);
+        setConvertedAmount(converted);
+        setConversionRate(rate); // << simpan rate
       });
     }
   }, [currencyFrom, currencyTo, amount, currencies.length]);
@@ -151,7 +153,11 @@ export default function App() {
           <div className="pt-4">
             <p className="text-gray-500 text-sm">{amount} {currencyFrom} =</p>
             <h2 className="text-3xl font-bold text-[#1d3557]">{convertedAmount?.toFixed(2) || '...'} {currencyTo}</h2>
-            <p className="text-gray-500 text-sm mt-1">1 EUR = 1.33660 ADA</p>
+            {conversionRate && (
+              <p className="text-gray-500 text-sm mt-1">
+                1 {currencyFrom} = {conversionRate.toFixed(2)} {currencyTo}
+              </p>
+            )}
           </div>
         </div>
       </div>
