@@ -25,4 +25,11 @@ export async function fetchCurrencies() {
     console.error('Error fetching currencies:', error.message);
     return [];
   }
+};
+
+export async function convertCurrency(from, to, amount) {
+  const res = await fetch(`${BASE_URL}/${API_KEY}/latest/${from}`);
+  const data = await res.json();
+  const rate = data.conversion_rates[to];
+  return amount * rate;
 }

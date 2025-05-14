@@ -1,7 +1,7 @@
 import { React, useEffect, useState } from 'react';
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { fetchCurrencies } from './api/currencyAPI'
+import { fetchCurrencies, convertCurrency } from './api/currencyAPI'
 import CurrencySelector from './components/currencySelector'
 
 const navigation = [
@@ -15,21 +15,32 @@ function classNames(...classes) {
 }
 
 export default function App() {
+  const [amount, setAmount] = useState(1);
+  const [convertedAmount, setConvertedAmount] = useState(null);
   const [currencies, setCurrencies] = useState([]);
-  const [currencyFrom, setCurrencyFrom] = useState('');
-  const [currencyTo, setCurrencyTo] = useState('');
+  const [currencyFrom, setCurrencyFrom] = useState('USD');
+  const [currencyTo, setCurrencyTo] = useState('IDR');
   const [loading, setLoading] = useState(true);
 
+  // Fetch currencies once on mount
   useEffect(() => {
     async function loadCurrencies() {
       const result = await fetchCurrencies();
       setCurrencies(result);
-      setCurrencyFrom(result[0]?.code || '');
-      setCurrencyTo(result[1]?.code || '');
       setLoading(false);
     }
     loadCurrencies();
   }, []);
+
+  // Convert only when input value/state changes, after currency list is loaded
+  useEffect(() => {
+    if (currencyFrom && currencyTo && amount && currencies.length > 0) {
+      convertCurrency(currencyFrom, currencyTo, amount).then(result => {
+        console.log("Converted Result:", result);
+        setConvertedAmount(result);
+      });
+    }
+  }, [currencyFrom, currencyTo, amount, currencies.length]);
   
   if (loading) {
     return <div className="text-center mt-10 text-white">Loading currencies...</div>;
@@ -103,6 +114,7 @@ export default function App() {
               type="text"
               id="amount"
               defaultValue={1}
+              onChange={(e) => setAmount(Number(e.target.value))}
               className="w-full input input-bordered input-lg text-xl font-medium bg-grey"
             />
           </div>
@@ -119,10 +131,8 @@ export default function App() {
               type="button"
               className="btn  btn-circle"
               onClick={() => {
-                const from = document.getElementById('currency_from').value;
-                const to = document.getElementById('currency_to').value;
-                document.getElementById('currency_from').value = to;
-                document.getElementById('currency_to').value = from;
+                setCurrencyFrom(currencyTo);
+                setCurrencyTo(currencyFrom);
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 17" className="w-5 h-5">
@@ -139,8 +149,8 @@ export default function App() {
 
           {/* Result */}
           <div className="pt-4">
-            <p className="text-gray-500 text-sm">1.00 Cardano =</p>
-            <h2 className="text-3xl font-bold text-[#1d3557]">0.74816706 Euros</h2>
+            <p className="text-gray-500 text-sm">{amount} {currencyFrom} =</p>
+            <h2 className="text-3xl font-bold text-[#1d3557]">{convertedAmount?.toFixed(2) || '...'} {currencyTo}</h2>
             <p className="text-gray-500 text-sm mt-1">1 EUR = 1.33660 ADA</p>
           </div>
         </div>

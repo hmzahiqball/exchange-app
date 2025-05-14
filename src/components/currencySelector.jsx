@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function CurrencySelector({ currencies, selected, onChange, id }) {
   return (
     <select
