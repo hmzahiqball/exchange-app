@@ -1,16 +1,18 @@
 import { currencyMeta } from '../data/currencyMeta';
 const BASE_URL = 'https://v6.exchangerate-api.com/v6';
-const API_KEY = 'd863388f6ff4c9dcf42e4941';
-import response from '../json/response.json';
+const API_KEY = 'd863388f6ff4c9dcf42e4941'; // use your api token key from exchangerate-api
+import response from '../json/response.json'; // delete this line if u want to use API
 
 export async function fetchCurrencies() {
   try {
-    const data = response;
+    const data = response; // delete this line if u want to use API
+
     // const res = await fetch(`${BASE_URL}/${API_KEY}/latest/USD`);
     // if (!res.ok) {
     //   throw new Error('Gagal mengambil data');
     // }
     // const data = await res.json();
+
     if (data.result !== 'success') {
       throw new Error('Respon API gagal');
     }
