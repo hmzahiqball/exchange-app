@@ -23,11 +23,16 @@ const CurrencyTable = () => {
       sortable: true,
     },
     {
-      name: "Rate",
-      selector: row => row.rate,
-      sortable: true,
-      right: true,
-    },
+  name: "Rate",
+  selector: row =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: row.code,
+      minimumFractionDigits: 2,
+    }).format(row.rate),
+  sortable: true,
+  right: true,
+}
   ];
 
   // Semua data kecuali USD
@@ -78,7 +83,7 @@ const CurrencyTable = () => {
                 <th className="px-2 py-1">{usdRow.code}</th>
                 <th className="px-2 py-1">{usdRow.name}</th>
                 <th className="px-2 py-1">{usdRow.country}</th>
-                <th className="px-2 py-1">{usdRow.rate}</th>
+                <th className="px-2 py-1">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(usdRow.rate)}</th>
               </tr>
             </tbody>
           </table>

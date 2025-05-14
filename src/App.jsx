@@ -8,7 +8,6 @@ import ExchangeRates from './pages/pageExchangeRate';
 const navigation = [
   { name: 'Converter', href: '/' },
   { name: 'Exchange Rates', href: '/exchange-rates' },
-  { name: 'About', href: '#' },
 ];
 
 function classNames(...classes) {

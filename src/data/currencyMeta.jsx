@@ -126,6 +126,7 @@ export const currencyMeta = {
   SGD: { name: "Singapore Dollar", country: "Singapore" },
   SHP: { name: "Saint Helena Pound", country: "Saint Helena" },
   SLE: { name: "Sierra Leonean Leone", country: "Sierra Leone" },
+  SLL: { name: "Sierra Leonean Leone", country: "Sierra Leone" },
   SOS: { name: "Somali Shilling", country: "Somalia" },
   SRD: { name: "Surinamese Dollar", country: "Suriname" },
   SSP: { name: "South Sudanese Pound", country: "South Sudan" },
