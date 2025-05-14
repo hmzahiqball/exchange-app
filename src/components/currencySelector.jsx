@@ -10,8 +10,8 @@ export default function CurrencySelector({ currencies, selected, onChange, id })
     >
       <option value="" disabled>Pilih mata uang</option>
       {currencies.map((currency) => (
-        <option key={currency} value={currency}>
-          {currency}
+        <option key={currency.code} value={currency.code}>
+          {currency.label}
         </option>
       ))}
     </select>

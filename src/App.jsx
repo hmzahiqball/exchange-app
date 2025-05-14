@@ -24,8 +24,8 @@ export default function App() {
     async function loadCurrencies() {
       const result = await fetchCurrencies();
       setCurrencies(result);
-      setCurrencyFrom(result[0]);
-      setCurrencyTo(result[1]);
+      setCurrencyFrom(result[0]?.code || '');
+      setCurrencyTo(result[1]?.code || '');
       setLoading(false);
     }
     loadCurrencies();

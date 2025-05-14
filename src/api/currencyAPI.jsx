@@ -1,5 +1,6 @@
+import { currencyMeta } from '../data/currencyMeta';
 const BASE_URL = 'https://v6.exchangerate-api.com/v6';
-const API_KEY = import.meta.env.TOKEN_API_KEY;
+const API_KEY = 'd863388f6ff4c9dcf42e4941';
 
 export async function fetchCurrencies() {
   try {
@@ -13,7 +14,13 @@ export async function fetchCurrencies() {
     }
 
     // Ambil semua kode mata uang
-    return Object.keys(data.conversion_rates);
+    return Object.keys(data.conversion_rates).map(code => {
+      const meta = currencyMeta[code];
+      return {
+        code,
+        label: meta ? `${code} - ${meta.name}, ${meta.country}` : code
+      };
+    });
   } catch (error) {
     console.error('Error fetching currencies:', error.message);
     return [];
