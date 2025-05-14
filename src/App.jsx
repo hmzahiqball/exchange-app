@@ -1,166 +1,70 @@
-import { React, useEffect, useState } from 'react';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react'
-import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-import { fetchCurrencies, convertCurrency } from './api/currencyAPI'
-import CurrencySelector from './components/currencySelector'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/react';
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Converter from './pages/pageConverter';
+import ExchangeRates from './pages/pageExchangeRate';
 
 const navigation = [
-  { name: 'Converter', href: '#' },
-  { name: 'Exchange Rates', href: '#' },
+  { name: 'Converter', href: '/' },
+  { name: 'Exchange Rates', href: '/exchange-rates' },
   { name: 'About', href: '#' },
-]
+];
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 export default function App() {
-  const [amount, setAmount] = useState(1);
-  const [convertedAmount, setConvertedAmount] = useState(null);
-  const [conversionRate, setConversionRate] = useState(null); // << tambahan
-  const [currencies, setCurrencies] = useState([]);
-  const [currencyFrom, setCurrencyFrom] = useState('USD');
-  const [currencyTo, setCurrencyTo] = useState('IDR');
-  const [loading, setLoading] = useState(true);
-
-  // Fetch currencies once on mount
-  useEffect(() => {
-    async function loadCurrencies() {
-      const result = await fetchCurrencies();
-      setCurrencies(result);
-      setLoading(false);
-    }
-    loadCurrencies();
-  }, []);
-
-  // Convert only when input value/state changes, after currency list is loaded
-  useEffect(() => {
-    if (currencyFrom && currencyTo && amount && currencies.length > 0) {
-    convertCurrency(currencyFrom, currencyTo, amount).then(({ converted, rate }) => {
-      console.log(converted);
-        setConvertedAmount(converted);
-        setConversionRate(rate); // << simpan rate
-      });
-    }
-  }, [currencyFrom, currencyTo, amount, currencies.length]);
-  
-  if (loading) {
-    return <div className="text-center mt-10 text-white">Loading currencies...</div>;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-r from-[#3f2a02] to-[#7e3606] text-white">
-      {/* Navbar */}
-      <Disclosure as="nav" className="bg-transparent">
-        {({ open }) => (
-          <>
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              <div className="flex h-16 justify-center items-center">
-                <div className="hidden md:flex space-x-4">
+    <Router>
+      <div className="min-h-screen bg-gradient-to-r from-[#3f2a02] to-[#7e3606] text-white">
+        <Disclosure as="nav" className="bg-transparent">
+          {({ open }) => (
+            <>
+              <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="flex h-16 justify-center items-center">
+                  <div className="hidden md:flex space-x-4">
+                    {navigation.map((item) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className={classNames('px-3 py-2 rounded-md text-sm text-gray-300 hover:text-white')}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                  <div className="md:hidden">
+                    <DisclosureButton className="text-gray-400 hover:text-white">
+                      {open ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+                    </DisclosureButton>
+                  </div>
+                </div>
+              </div>
+              <DisclosurePanel className="md:hidden">
+                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                   {navigation.map((item) => (
-                    <a
+                    <DisclosureButton
                       key={item.name}
-                      href={item.href}
-                      className={classNames(
-                        item.current ? 'text-white font-semibold' : 'text-gray-300 hover:text-white',
-                        'px-3 py-2 rounded-md text-sm'
-                      )}
+                      as={Link}
+                      to={item.href}
+                      className="block text-white px-3 py-2 rounded-md text-base font-medium"
                     >
                       {item.name}
-                    </a>
+                    </DisclosureButton>
                   ))}
                 </div>
-                <div className="md:hidden">
-                  <DisclosureButton className="text-gray-400 hover:text-white">
-                    {open ? (
-                      <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                    ) : (
-                      <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-                    )}
-                  </DisclosureButton>
-                </div>
-              </div>
-            </div>
+              </DisclosurePanel>
+            </>
+          )}
+        </Disclosure>
 
-            <DisclosurePanel className="md:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                {navigation.map((item) => (
-                  <DisclosureButton
-                    key={item.name}
-                    as="a"
-                    href={item.href}
-                    className="block text-white px-3 py-2 rounded-md text-base font-medium"
-                  >
-                    {item.name}
-                  </DisclosureButton>
-                ))}
-              </div>
-            </DisclosurePanel>
-          </>
-        )}
-      </Disclosure>
-
-      {/* Title */}
-      <div className="text-center mt-10">
-        <h1 className="text-4xl font-bold">Currency Converter</h1>
-        <p className="mt-2 text-lg text-gray-200">Instantly convert one currency to another with the latest exchange rates.</p>
+        <Routes>
+          <Route path="/" element={<Converter />} />
+          <Route path="/exchange-rates" element={<ExchangeRates />} />
+        </Routes>
       </div>
-
-      {/* Card */}
-      <div className="max-w-2xl mx-auto mt-10 bg-white rounded-2xl shadow-lg p-6" data-theme="cupcake">
-        <div className="flex flex-col space-y-4">
-          {/* Amount */}
-          <div className="flex items-center">
-            <label htmlFor="amount" className="sr-only">Amount</label>
-            <input
-              type="text"
-              id="amount"
-              defaultValue={1}
-              onChange={(e) => setAmount(Number(e.target.value))}
-              className="w-full input input-bordered input-lg text-xl font-medium bg-grey"
-            />
-          </div>
-
-          {/* Currency Selector */}
-          <div className="flex items-center space-x-2">
-            <CurrencySelector
-              currencies={currencies}
-              selected={currencyFrom}
-              onChange={setCurrencyFrom}
-              id="currency_from"
-            />
-            <button
-              type="button"
-              className="btn  btn-circle"
-              onClick={() => {
-                setCurrencyFrom(currencyTo);
-                setCurrencyTo(currencyFrom);
-              }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 17" className="w-5 h-5">
-                <path fill="currentColor" d="M11.726 1.273l2.387 2.394H.667V5h13.446l-2.386 2.393.94.94 4-4-4-4-.94.94zM.666 12.333l4 4 .94-.94L3.22 13h13.447v-1.333H3.22l2.386-2.394-.94-.94-4 4z"/>
-              </svg>
-            </button>
-            <CurrencySelector
-              currencies={currencies}
-              selected={currencyTo}
-              onChange={setCurrencyTo}
-              id="currency_to"
-            />
-          </div>
-
-          {/* Result */}
-          <div className="pt-4">
-            <p className="text-gray-500 text-sm">{amount} {currencyFrom} =</p>
-            <h2 className="text-3xl font-bold text-[#1d3557]">{convertedAmount?.toFixed(2) || '...'} {currencyTo}</h2>
-            {conversionRate && (
-              <p className="text-gray-500 text-sm mt-1">
-                1 {currencyFrom} = {conversionRate.toFixed(2)} {currencyTo}
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
+    </Router>
+  );
 }

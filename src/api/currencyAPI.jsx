@@ -1,14 +1,16 @@
 import { currencyMeta } from '../data/currencyMeta';
 const BASE_URL = 'https://v6.exchangerate-api.com/v6';
 const API_KEY = 'd863388f6ff4c9dcf42e4941';
+import response from '../json/response.json';
 
 export async function fetchCurrencies() {
   try {
-    const res = await fetch(`${BASE_URL}/${API_KEY}/latest/USD`);
-    if (!res.ok) {
-      throw new Error('Gagal mengambil data');
-    }
-    const data = await res.json();
+    const data = response;
+    // const res = await fetch(`${BASE_URL}/${API_KEY}/latest/USD`);
+    // if (!res.ok) {
+    //   throw new Error('Gagal mengambil data');
+    // }
+    // const data = await res.json();
     if (data.result !== 'success') {
       throw new Error('Respon API gagal');
     }
@@ -28,13 +30,31 @@ export async function fetchCurrencies() {
 };
 
 export async function convertCurrency(from, to, amount) {
-  const res = await fetch(`${BASE_URL}/${API_KEY}/latest/${from}`);
-  const data = await res.json();
-  const rate = data.conversion_rates[to];
+  const data = response;
+  const fromRate = data.conversion_rates[from];
+  const toRate = data.conversion_rates[to];
+
+  if (!fromRate || !toRate) {
+    throw new Error(`Currency not found: from "${from}" or to "${to}"`);
+  }
+
+  const rate = toRate / fromRate;
   const converted = amount * rate;
 
   return {
-    converted, // total hasil konversi
-    rate       // kurs per 1 unit
+    converted,
+    rate,
   };
 }
+
+// export async function convertCurrency(from, to, amount) {
+//   const res = await fetch(`${BASE_URL}/${API_KEY}/latest/${from}`);
+//   const data = await res.json();
+//   const rate = data.conversion_rates[to];
+//   const converted = amount * rate;
+
+//   return {
+//     converted, // total hasil konversi
+//     rate       // kurs per 1 unit
+//   };
+// }
