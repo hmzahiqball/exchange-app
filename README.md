@@ -1,61 +1,63 @@
 # 💱 Currency Exchange Rate Viewer
 
-Aplikasi berbasis React yang menampilkan data nilai tukar mata uang asing dalam format tabel interaktif menggunakan `react-data-table-component`. Aplikasi ini mendukung tampilan data statis dari file lokal maupun data live dari API [exchangerate-api.com](https://www.exchangerate-api.com).
+A React-based application that displays foreign exchange rates in an interactive table format using `react-data-table-component`. The app supports both static data from a local file and live data from the [exchangerate-api.com](https://www.exchangerate-api.com) API
+
+![Screenshot](public/screenshot1.png)
+![Screenshot](public/screenshot2.png)
+---
+
+## 📌 Features
+
+- 🌍 Displays exchange rates for 150+ global currencies
+- 📊 Interactive data table: sortable, paginated, and responsive
+- 💵 Static row for USD always stays at the top
+- 🔄 Supports live data via a personal API key from exchangerate-api.com
+- 📁 Defaults to local JSON file (`src/json/response.json`) if no API is used
+- 🎨 Clean and responsive UI powered by Tailwind CSS
 
 ---
 
-## 📌 Fitur
+## 🚀 Installation & Running the App
 
-- 🌍 Menampilkan nilai tukar untuk 150+ mata uang dunia
-- 📊 Tabel interaktif: dapat diurutkan, dipaginasi, dan responsif
-- 💵 Baris statis untuk mata uang **USD** selalu tampil di atas
-- 🔄 Mendukung data live menggunakan API pribadi dari exchangerate-api.com
-- 📁 Secara default menggunakan file JSON lokal (`src/json/response.json`)
-- 🎨 Antarmuka bersih dan responsif menggunakan Tailwind CSS
-
----
-
-## 🚀 Instalasi & Menjalankan Aplikasi
-
-### 1. Clone repositori
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/hmzahiqball/currency-exchange-viewer.git
-cd currency-exchange-viewer
+git clone https://github.com/hmzahiqball/exchange-app.git
+cd exchange-app
 ```
 
-### 2. Instalasi dependensi
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Jalankan aplikasi
+### 3. Start the Development Server
 ```bash
 npm run dev
 ```
 
 
-## 🔧 Menggunakan API Live (Opsional)
-Untuk menampilkan data nilai tukar real-time, Anda bisa menggunakan API key pribadi dari:
+## 🔧 Using Live API (Optional)
+To display real-time exchange rates, you can use your personal API key from:
 
 🔗 https://www.exchangerate-api.com
 
-### Langkah-langkah:
-- Daftar dan dapatkan API key pribadi Anda.
-- Masuk ke src/api/currencyAPI.jsx dan modifikasi token API
+### Steps:
+- Sign up and get your personal API key.
+- Open `src/api/currencyAPI.jsx` and update the token with your API key
 
 
-## 🗂 Struktur Proyek
+## 🗂 Project Structure
 ```bash
 ├── public/
 ├── src/
 │   ├── data/
-│   │   └── currencyMeta.js        # Metadata nama dan negara mata uang
+│   │   └── currencyMeta.js        # Currency names and country metadata
 │   ├── json/
-│   │   └── response.json          # Data nilai tukar lokal (default)
+│   │   └── response.json          # Local exchange rate data (default)
 │   └── components/
-│       └── CurrencyTable.jsx      # Komponen utama tabel
-├── .env                           # File konfigurasi API key (opsional)
+│       └── CurrencyTable.jsx      # Main data table component
+├── .env                           # API key configuration file (optional)
 ├── package.json
 └── README.md
 ```
