@@ -6,6 +6,12 @@ A React-based application that displays foreign exchange rates in an interactive
 ![Screenshot](public/screenshot2.png)
 ---
 
+## 🌐 Live Demo
+
+Example: [View Demo](https://put-exchangerate.netlify.app)
+
+---
+
 ## 📌 Features
 
 - 🌍 Displays exchange rates for 150+ global currencies
